@@ -54,6 +54,7 @@ app.post("/upload-file", upload.single("file"), async (req, res) => {
 
     // Load JWK from server directory
     const jwkPath = path.join(__dirname, "jwk.json");
+    console.log(jwkPath);
     const jwk = JSON.parse(fs.readFileSync(jwkPath, "utf8"));
 
     const filePath = file.path;
@@ -67,15 +68,15 @@ app.post("/upload-file", upload.single("file"), async (req, res) => {
     });
     const { winc: balance } = await turbo.getBalance();
 
-    if (balance < fileSizeCost) {
-      const { url } = await turbo.createCheckoutSession({
-        amount: fileSizeCost,
-        owner: address,
-      });
-      return res
-        .status(402)
-        .json({ message: "Insufficient balance. Top-up required.", url });
-    }
+    // if (balance < fileSizeCost) {
+    //   const { url } = await turbo.createCheckoutSession({
+    //     amount: fileSizeCost,
+    //     owner: address,
+    //   });
+    //   return res
+    //     .status(402)
+    //     .json({ message: "Insufficient balance. Top-up required.", url });
+    // }
 
     // Upload the file
     const { id, owner, dataCaches, fastFinalityIndexes } =
@@ -85,7 +86,7 @@ app.post("/upload-file", upload.single("file"), async (req, res) => {
       });
 
     // Cleanup uploaded file
-    fs.unlinkSync(filePath);
+    // fs.unlinkSync(filePath);
 
     res.status(200).json({
       message: "File uploaded successfully!",
